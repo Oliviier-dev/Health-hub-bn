@@ -1,27 +1,21 @@
-"use strict";
+import fs from "fs";
+import path from "path";
+import { Sequelize, DataTypes } from "sequelize";
+import config from "../config/config.js";
 
-const fs = require("fs");
-const path = require("path");
-const Sequelize = require("sequelize");
-const process = require("process");
-const basename = path.basename(__filename);
+const basename = path.basename(new URL(import.meta.url).pathname);
 const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "/../config/config.js")[env];
+const configData = config[env];
 const db = {};
 
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(
-    config.database,
-    config.username,
-    config.password,
-    config,
-  );
-}
+// Create a new Sequelize instance with configuration
+const sequelize = new Sequelize(configData.url, {
+  dialect: configData.dialect,
+});
 
-fs.readdirSync(__dirname)
+// Read the models directory and import each model file
+const modelsDir = new URL(".", import.meta.url).pathname;
+fs.readdirSync(modelsDir)
   .filter((file) => {
     return (
       file.indexOf(".") !== 0 &&
@@ -30,14 +24,13 @@ fs.readdirSync(__dirname)
       file.indexOf(".test.js") === -1
     );
   })
-  .forEach((file) => {
-    const model = require(path.join(__dirname, file))(
-      sequelize,
-      Sequelize.DataTypes,
-    );
-    db[model.name] = model;
+  .forEach(async (file) => {
+    const model = await import(path.join(modelsDir, file));
+    const modelInstance = model.default(sequelize, DataTypes);
+    db[modelInstance.name] = modelInstance;
   });
 
+// Setup associations if they exist
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
@@ -47,4 +40,4 @@ Object.keys(db).forEach((modelName) => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-module.exports = db;
+export default db;
