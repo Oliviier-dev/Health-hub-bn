@@ -10,6 +10,12 @@ const env = process.env.NODE_ENV || 'development';
 const configData = config[env];
 const db = {};
 
+if (!configData) {
+    throw new Error(
+        `Config data for environment "${env}" is not defined. Please check your environment variables.`,
+    );
+}
+
 // Create a new Sequelize instance with configuration
 const sequelize = new Sequelize(configData.url, {
     dialect: configData.dialect,
