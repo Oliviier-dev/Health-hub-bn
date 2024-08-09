@@ -1,40 +1,55 @@
-import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const swaggerDefinition = {
-    openapi: '3.0.0',
-    info: {
-        title: 'Health Hub API',
-        version: '1.0.0',
-        description: 'This is a REST API application for health hub.',
-        license: {
-            name: 'Licensed Under MIT',
-            url: 'https://spdx.org/licenses/MIT.html',
-        },
-        contact: {
-            name: 'JSONPlaceholder',
-            url: 'https://jsonplaceholder.typicode.com',
-        },
-    },
-    servers: [
-        {
-            url: 'http://localhost:8080',
-            description: 'Development server',
-        },
-        {
-            url: process.env.DEPLOYED_URL,
-            description: 'Production server',
-        },
-    ],
-};
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const options = {
-    swaggerDefinition,
-    apis: ['./src/docs/annotations/**/*.js'],
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Health Hub API',
+            version: '1.0.0',
+            description: 'This is a REST API application for health hub.',
+        },
+        servers: [
+            {
+                url: process.env.LOCAL_URL,
+                description: 'Development Server',
+            },
+            {
+                url: process.env.DEPLOYED_URL,
+                description: 'Staging Server',
+            },
+        ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'apiKey',
+                    name: 'Authorization',
+                    in: 'header',
+                    description: 'Bearer token authorization',
+                },
+            },
+        },
+    },
+    apis: [path.join(__dirname, 'annotations/**/*.js')],
 };
 
-const swaggerSpec = swaggerJSDoc(options);
+const swaggerSpec = swaggerJsdoc(options);
 
-export default (app) => {
+const setUpSwagger = (app) => {
     app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+    app.get('/docs.json', (req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(swaggerSpec);
+    });
 };
+
+export default setUpSwagger;

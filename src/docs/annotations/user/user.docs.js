@@ -1,8 +1,10 @@
 /**
  * @swagger
- * /users:
+ * /api/v1/users:
  *   get:
  *     summary: Retrieve a list of users
+ *     tags:
+ *       - User
  *     description: Retrieve a list of users from the database.
  *     responses:
  *       200:
