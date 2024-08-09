@@ -1,11 +1,14 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import db from './models/index.js';
+import setUpSwagger from './docs/swagger.js';
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+setUpSwagger(app);
 
 app.get('/', (req, res) => {
     res.send('Welcome to Health Hub');
