@@ -1,0 +1,42 @@
+name: CI
+
+on:
+    push:
+        branches: ['develop']
+    pull_request:
+        branches: ['develop']
+
+jobs:
+    format:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v2
+            - name: Set up Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: '18'
+            - run: npm install
+            - run: npx prettier --check .
+
+    deploy:
+        name: Deploy
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [18.x, 20.x]
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
+
+            - name: Deploy to development
+              uses: johnbeynon/render-deploy-action@v0.0.8
+              with:
+                  service-id: ${{ secrets.RENDER_SERVICE_ID }}
+                  api-key: ${{ secrets.RENDER_API_KEY }}
