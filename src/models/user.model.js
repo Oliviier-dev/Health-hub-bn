@@ -20,9 +20,9 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            active: {
+            verified: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: true,
+                defaultValue: false,
                 allowNull: false,
             },
             first_name: {
@@ -35,6 +35,7 @@ export default (sequelize) => {
             },
             role: {
                 type: DataTypes.ENUM('ADMIN', 'DOCTOR', 'PATIENT'),
+                defaultValue: 'PATIENT',
                 allowNull: false,
             },
             image_url: {
