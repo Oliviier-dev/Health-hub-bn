@@ -42,6 +42,14 @@ export default (sequelize) => {
                 type: DataTypes.STRING(2048),
                 allowNull: true,
             },
+            email_verification_token: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            email_verification_token_expiration: {
+                type: DataTypes.DATE,
+                allowNull: true,
+            },
         },
         {
             tableName: 'users',

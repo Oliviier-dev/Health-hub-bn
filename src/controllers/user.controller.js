@@ -30,4 +30,61 @@ export class UserContoller {
             res.status(500).send('Internal Server Error');
         }
     }
+
+    static async emailVerification(req, res) {
+        try {
+            const { token } = req.params;
+            if (!token) {
+                return res.status(400).send({ error: 'Token is required' });
+            }
+
+            const isVerified = await UserService.emailVerification(token);
+
+            if (isVerified) {
+                return res.status(200).send({ message: 'Email Verified Successfully' });
+            }
+
+            return res.status(400).send({ error: 'Invalid or expired token' });
+        } catch (error) {
+            console.error('Error verifying the user:', error);
+
+            if (error.message === 'Account is already verified') {
+                return res.status(409).send({ error: 'Account is already verified' });
+            }
+
+            if (error.message === 'Token is invalid or expired') {
+                return res.status(400).send({ error: 'Token is invalid or expired' });
+            }
+
+            res.status(500).send('Internal Server Error');
+        }
+    }
+
+    static async resendEmailVerification(req, res) {
+        try {
+            const { email } = req.body;
+
+            if (!email) {
+                res.status(400).send('Please provide valid email');
+            }
+
+            const result = await UserService.resendEmailVerification(email);
+
+            if (result.success) {
+                return res.status(200).send({ message: 'Verification email sent successfully' });
+            } else {
+                return res.status(500).send({ error: 'Failed to send verification email' });
+            }
+        } catch (error) {
+            if (error.message === 'Account is already verified') {
+                return res.status(409).send({ error: 'Account is already verified' });
+            }
+
+            if (error.message === 'User not found') {
+                return res.status(404).send({ error: 'User not found' });
+            }
+            console.error('Error in resending email verification:', error.message);
+            res.status(500).send('Internal Server Error');
+        }
+    }
 }

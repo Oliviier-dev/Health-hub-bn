@@ -11,12 +11,12 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-const sendMail = (sender_email, receiver_email, email_subject, email_body) => {
+export const sendMail = (receiver_email, email_subject, email_body) => {
     const mailOptions = {
-        from: sender_email,
+        from: process.env.sender_email,
         to: receiver_email,
         subject: email_subject,
-        text: email_body,
+        html: email_body,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -27,10 +27,3 @@ const sendMail = (sender_email, receiver_email, email_subject, email_body) => {
         }
     });
 };
-
-let sender_email = 'yuppiegvng@gmail.com';
-let receiver_email = 'byiringiroolivier250@gmail.com';
-let email_subject = 'Nodemailer Demo';
-let email_body = 'Greetings from Health Hub!';
-
-sendMail(sender_email, receiver_email, email_subject, email_body);
