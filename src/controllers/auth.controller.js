@@ -54,7 +54,7 @@ export class AuthContoller {
             if (error.message === 'User not found') {
                 return res.status(404).send({ error: 'User not found' });
             }
-            console.error('Error in resending email verification:', error.message);
+            console.error('Error in resending email verification:', error);
             return res.status(500).send('Internal Server Error');
         }
     }
@@ -106,6 +106,54 @@ export class AuthContoller {
         } catch (error) {
             console.error('Logout error ', error);
             res.status(500).json({ error: 'Logout failed' });
+        }
+    }
+
+    static async resetPasswordToken(req, res) {
+        try {
+            const { email } = req.body;
+
+            if (!email) {
+                return res.status(400).send('Please provide valid email');
+            }
+
+            const result = await AuthService.resetPasswordToken(email);
+            if (result.success) {
+                return res.status(200).send({ message: 'Reset password email sent successfully' });
+            } else {
+                return res.status(500).send({ error: 'Failed to send reset password email' });
+            }
+        } catch (error) {
+            if (error.message === 'User not found') {
+                return res.status(404).send({ error: 'User not found' });
+            }
+            console.error('Error in sending reset password token:', error);
+            return res.status(500).send('Internal Server Error');
+        }
+    }
+
+    static async resetPassword(req, res) {
+        try {
+            const { token } = req.params;
+            const { password } = req.body;
+
+            if (!password) {
+                return res.status(400).send('Please provide all details');
+            }
+
+            const result = await AuthService.resetPassword(token, password);
+
+            if (result.success) {
+                return res.status(200).send({ message: 'Password reset successfully' });
+            } else {
+                return res.status(500).send({ error: 'Failed to reset password' });
+            }
+        } catch (error) {
+            if (error.message === 'Invalid or expired token') {
+                return res.status(400).send({ error: 'Invalid or expired token' });
+            }
+            console.error('Error in reseting the password:', error);
+            return res.status(500).send('Internal Server Error');
         }
     }
 }

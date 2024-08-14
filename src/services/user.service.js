@@ -41,9 +41,10 @@ export class UserService {
                 email_verification_token_expiration,
             });
 
-            const verification_link = process.env.IS_LOCAL
-                ? `${process.env.LOCAL_URL}/api/v1/auth/verify/${email_verification_token}`
-                : `${process.env.DEPLOYED_URL}/api/v1/auth/verify/${email_verification_token}`;
+            const verification_link =
+                process.env.IS_LOCAL === 'true'
+                    ? `${process.env.LOCAL_URL}/api/v1/auth/verify/${email_verification_token}`
+                    : `${process.env.DEPLOYED_URL}/api/v1/auth/verify/${email_verification_token}`;
 
             sendMail(email, 'Email Verification', verificationEmailTemplate(verification_link));
 
