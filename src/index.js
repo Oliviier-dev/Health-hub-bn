@@ -4,6 +4,7 @@ import db from './models/index.js';
 import setUpSwagger from './docs/swagger.js';
 import cors from 'cors';
 import router from './routes/index.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const port = process.env.PORT || 8080;
 
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 setUpSwagger(app, parseInt(`${port}`, 10));

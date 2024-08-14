@@ -20,9 +20,9 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            active: {
+            verified: {
                 type: DataTypes.BOOLEAN,
-                defaultValue: true,
+                defaultValue: false,
                 allowNull: false,
             },
             first_name: {
@@ -35,10 +35,27 @@ export default (sequelize) => {
             },
             role: {
                 type: DataTypes.ENUM('ADMIN', 'DOCTOR', 'PATIENT'),
+                defaultValue: 'PATIENT',
                 allowNull: false,
             },
             image_url: {
                 type: DataTypes.STRING(2048),
+                allowNull: true,
+            },
+            email_verification_token: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            email_verification_token_expiration: {
+                type: DataTypes.DATE,
+                allowNull: true,
+            },
+            reset_password_token: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            reset_password_token_expiration: {
+                type: DataTypes.DATE,
                 allowNull: true,
             },
         },
