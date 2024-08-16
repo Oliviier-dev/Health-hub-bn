@@ -45,7 +45,7 @@ module.exports = {
                     updatedAt: new Date(),
                 },
                 {
-                    user_id: uuidv4(),
+                    user_id: process.env.userId,
                     email: 'patient@example.com',
                     password: hashedPassword,
                     verified: true,

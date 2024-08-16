@@ -66,5 +66,13 @@ export default (sequelize) => {
         },
     );
 
+    User.associate = (models) => {
+        User.hasOne(models.UserProfile, {
+            foreignKey: 'user_id',
+            as: 'profile',
+            onDelete: 'CASCADE',
+        });
+    };
+
     return User;
 };
