@@ -27,6 +27,11 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
+            role: {
+                type: DataTypes.ENUM('ADMIN', 'DOCTOR', 'PATIENT'),
+                defaultValue: 'PATIENT',
+                allowNull: false,
+            },
             phone_number: {
                 type: DataTypes.STRING,
                 allowNull: true,
@@ -57,7 +62,7 @@ export default (sequelize) => {
             },
         },
         {
-            tableName: 'patientprofiles',
+            tableName: 'userprofiles',
             sequelize,
             timestamps: true,
         },

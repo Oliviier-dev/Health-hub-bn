@@ -13,13 +13,14 @@ module.exports = {
          * }], {});
          */
         await queryInterface.bulkInsert(
-            'patientprofiles',
+            'userprofiles',
             [
                 {
                     id: uuidv4(),
                     user_id: process.env.userId,
                     first_name: 'Patient',
                     last_name: 'Zero',
+                    role: 'PATIENT',
                     phone_number: '123-456-7890',
                     gender: 'Male',
                     date_of_birth: new Date('1990-01-01'),
@@ -45,6 +46,6 @@ module.exports = {
          * Example:
          * await queryInterface.bulkDelete('People', null, {});
          */
-        await queryInterface.bulkDelete('patientprofiles', null, {});
+        await queryInterface.bulkDelete('userprofiles', null, {});
     },
 };
