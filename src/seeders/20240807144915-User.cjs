@@ -33,7 +33,7 @@ module.exports = {
                     updatedAt: new Date(),
                 },
                 {
-                    user_id: uuidv4(),
+                    user_id: process.env.doctorId,
                     email: 'doctor@example.com',
                     password: hashedPassword,
                     verified: true,

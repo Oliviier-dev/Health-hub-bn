@@ -72,6 +72,11 @@ export default (sequelize) => {
             as: 'profile',
             onDelete: 'CASCADE',
         });
+        User.hasOne(models.PracticeProfile, {
+            foreignKey: 'doctor_id',
+            as: 'practiceprofile',
+            onDelete: 'CASCADE',
+        });
     };
 
     return User;
