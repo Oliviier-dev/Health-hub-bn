@@ -30,4 +30,45 @@ export class UserContoller {
             return res.status(500).send('Internal Server Error');
         }
     }
+
+    static async getUserProfile(req, res) {
+        try {
+            const userId = req.user.user_id;
+
+            const userProfile = await UserService.getUserProfile(userId);
+
+            if (!userProfile) {
+                return res.status(404).send({ message: 'User Profile not found' });
+            }
+
+            return res
+                .status(200)
+                .send({ message: 'user profile retrieved successfully', data: userProfile });
+        } catch (error) {
+            console.error('Error retrieving users:', error);
+            return res.status(500).send('Internal Server Error');
+        }
+    }
+
+    static async updateUserProfile(req, res) {
+        try {
+            const userId = req.user.user_id;
+            const updatedFields = req.body;
+            const updateProfile = await UserService.updateUserProfile(userId, updatedFields);
+
+            if (!updateProfile) {
+                return res.status(404).send({ message: 'User Profile not found' });
+            }
+
+            return res
+                .status(200)
+                .send({ message: 'User profile updated successfully', data: updateProfile });
+        } catch (error) {
+            if (error.message === 'User profile not found') {
+                return res.status(404).send({ error: 'User profile not found' });
+            }
+            console.error('Error updating user Profile:', error);
+            return res.status(500).send('Internal Server Error');
+        }
+    }
 }
