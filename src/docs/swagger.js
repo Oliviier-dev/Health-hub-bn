@@ -15,7 +15,7 @@ const options = {
         info: {
             title: 'Health Hub API',
             version: '1.0.0',
-            description: 'This is a REST API application for health hub.',
+            description: 'This is a REST API for the Health Hub application.',
         },
         servers: [
             {

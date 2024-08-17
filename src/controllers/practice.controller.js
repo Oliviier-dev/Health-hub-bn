@@ -71,7 +71,9 @@ export class PracticeContoller {
                 .send({ message: 'Practice data updated successfully', data: updatedPractice });
         } catch (error) {
             if (error.message === 'Practice not found') {
-                return res.status(404).send({ error: 'Practice not found' });
+                return res
+                    .status(404)
+                    .send({ error: "Practice not found, You don't have a practice" });
             }
             console.error('Error updating the practice:', error);
             return res.status(500).send('Internal Server Error');
