@@ -5,7 +5,7 @@ Health Hub is an easy-to-use platform that helps patients and doctors connect fo
 ## ✨ Features
 
 -   🔒 User authentication (Sign up, Log in, Log out, Reset Password)
--   🧑‍⚕️ Patient and doctor profile management
+-   🧑‍⚕️ Patient, doctor and clinics(practices) profile management
 -   📅 Appointment booking and approval
 -   💳 Payment processing before appointments
 -   💬 Messaging system post-payment
@@ -40,7 +40,7 @@ HealthHub/
 
 ```bash
 
-git clone https://github.com/oliviier-dev/health-hub.git
+git clone https://github.com/Oliviier-dev/Health-hub-bn.git
 ```
 
 ## Install dependencies:
