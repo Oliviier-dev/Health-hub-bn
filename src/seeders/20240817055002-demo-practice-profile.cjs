@@ -16,7 +16,7 @@ module.exports = {
             'practiceprofiles',
             [
                 {
-                    id: uuidv4(),
+                    id: process.env.practiceId,
                     doctor_id: process.env.doctorId,
                     practice_name: 'Health and Wellness Clinic',
                     phone_number: '123-456-7890',
