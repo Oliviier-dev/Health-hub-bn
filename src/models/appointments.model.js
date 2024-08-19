@@ -51,6 +51,14 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            service: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            price: {
+                type: DataTypes.FLOAT,
+                allowNull: false,
+            },
             rescheduledDateTime: {
                 type: DataTypes.DATE,
                 allowNull: true,
