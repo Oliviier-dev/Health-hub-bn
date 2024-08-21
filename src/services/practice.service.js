@@ -16,12 +16,15 @@ export class PracticeService {
             const practice = await db.PracticeProfile.findOne({
                 where: { id: practiceId },
             });
-            const doctor = await db.User.findOne({
-                where: { user_id: practice.doctor_id },
-            });
+
             if (!practice) {
                 throw new Error('Practice Not Found');
             }
+
+            const doctor = await db.User.findOne({
+                where: { user_id: practice.doctor_id },
+            });
+
             return { practice, doctor };
         } catch (error) {
             throw error;

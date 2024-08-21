@@ -77,6 +77,15 @@ export default (sequelize) => {
             as: 'practiceprofile',
             onDelete: 'CASCADE',
         });
+        User.hasMany(models.Appointment, {
+            foreignKey: 'patient_id',
+            as: 'appointments',
+            onDelete: 'CASCADE',
+        });
+        models.Appointment.belongsTo(User, {
+            foreignKey: 'patient_id',
+            as: 'patient',
+        });
     };
 
     return User;
