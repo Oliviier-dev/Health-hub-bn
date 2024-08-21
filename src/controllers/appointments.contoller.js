@@ -125,16 +125,21 @@ export class AppointmentController {
                 data: confirmedAppointment,
             });
         } catch (error) {
-            if (error.message === 'practice not found') {
-                return res.status(404).json({ message: 'You dont have a practice' });
+            const errorMapping = {
+                'Practice not found': 404,
+                'Appointment not found': 404,
+                'Appointment is canceled and cannot be confirmed': 409,
+                'Appointment is already confirmed': 409,
+                'Only pending appointments can be confirmed': 400,
+            };
+
+            const statusCode = errorMapping[error.message] || 500;
+
+            if (statusCode === 500) {
+                console.error('Error confirming the appointment:', error);
             }
 
-            if (error.message === 'Appointment not found') {
-                return res.status(404).json({ message: 'Appointment not found' });
-            }
-
-            console.error('Error confirming the appointment:', error);
-            return res.status(500).send('Internal Server Error');
+            return res.status(statusCode).json({ message: error.message });
         }
     }
 
@@ -149,7 +154,7 @@ export class AppointmentController {
             const { appointmentId } = req.params;
             const { reason } = req.body;
 
-            const confirmedAppointment = await AppointmentService.cancelAppointment(
+            const cancelledAppointment = await AppointmentService.cancelAppointment(
                 userId,
                 appointmentId,
                 reason,
@@ -158,11 +163,15 @@ export class AppointmentController {
             return res.status(200).json({
                 status: 'success',
                 message: 'Appointment canceled successfully',
-                data: confirmedAppointment,
+                data: cancelledAppointment,
             });
         } catch (error) {
             if (error.message === 'practice not found') {
                 return res.status(404).json({ message: 'You dont have a practice' });
+            }
+
+            if (error.message === 'Appointment Already cancelled') {
+                return res.status(404).json({ message: 'Appointment Already cancelled' });
             }
 
             if (error.message === 'Appointment not found') {
@@ -197,25 +206,103 @@ export class AppointmentController {
                 data: rescheduledAppointment,
             });
         } catch (error) {
-            if (error.message === 'practice not found') {
-                return res.status(404).json({ message: 'You dont have a practice' });
-            }
-
-            if (error.message === 'Appointment not found') {
-                return res.status(404).json({ message: 'Appointment not found' });
-            }
-
-            if (error.message === "This practice isn't available at this time.") {
-                return res.status(409).json({
-                    status: 'error',
+            const errorMapping = {
+                'practice not found': { statusCode: 404, message: "You don't have a practice" },
+                'Appointment not found': { statusCode: 404, message: 'Appointment not found' },
+                'Appointment is canceled': { statusCode: 409, message: 'Appointment is canceled' },
+                'Appointment is already rescheduled': {
+                    statusCode: 409,
+                    message: 'Appointment is already rescheduled',
+                },
+                "This practice isn't available at this time.": {
+                    statusCode: 409,
                     message:
                         'The selected time slot is not available due to a scheduling conflict.',
-                    details: "This practice isn't available at this time.",
-                });
+                },
+            };
+
+            const mappedError = errorMapping[error.message];
+            if (mappedError) {
+                return res.status(mappedError.statusCode).json({ message: mappedError.message });
             }
 
             console.error('Error rescheduling the appointment:', error);
             return res.status(500).send('Internal Server Error');
+        }
+    }
+
+    static async patientConfirmRescheduledAppointment(req, res) {
+        try {
+            const userId = req.user.user_id;
+
+            if (req.user.role !== 'PATIENT') {
+                return res.status(403).send('Only patients can access this route');
+            }
+
+            const { appointmentId } = req.params;
+
+            const confirmedAppointment =
+                await AppointmentService.patientConfirmRescheduledAppointment(
+                    userId,
+                    appointmentId,
+                );
+
+            return res.status(200).json({
+                status: 'success',
+                message: 'Appointment confirmed successfully',
+                data: confirmedAppointment,
+            });
+        } catch (error) {
+            const errorMapping = {
+                'Appointment not found': 404,
+                'Appointment is canceled and cannot be confirmed': 409,
+                'Appointment is already confirmed': 409,
+                'Only rescheduled appointments can be confirmed by the patient': 400,
+            };
+
+            const statusCode = errorMapping[error.message] || 500;
+
+            if (statusCode === 500) {
+                console.error('Error confirming the appointment:', error);
+            }
+
+            return res.status(statusCode).json({ message: error.message });
+        }
+    }
+
+    static async patientCancelRescheduledAppointment(req, res) {
+        try {
+            const userId = req.user.user_id;
+
+            if (req.user.role !== 'PATIENT') {
+                return res.status(403).send('Only patients can access this route');
+            }
+
+            const { appointmentId } = req.params;
+
+            const cancelledAppointment =
+                await AppointmentService.patientCancelRescheduledAppointment(userId, appointmentId);
+
+            return res.status(200).json({
+                status: 'success',
+                message: 'Appointment cancelled successfully',
+                data: cancelledAppointment,
+            });
+        } catch (error) {
+            const errorMapping = {
+                'Appointment not found': 404,
+                'Appointment is already canceled': 409,
+                'Appointment is already confirmed and cannot be canceled by the patient': 409,
+                'Only rescheduled appointments can be canceled by the patient': 400,
+            };
+
+            const statusCode = errorMapping[error.message] || 500;
+
+            if (statusCode === 500) {
+                console.error('Error cancelling the appointment:', error);
+            }
+
+            return res.status(statusCode).json({ message: error.message });
         }
     }
 }

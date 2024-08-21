@@ -8,19 +8,29 @@ appointmentRoute.post('/:practiceId', isAuthenticated, AppointmentController.boo
 appointmentRoute.get('/patient', isAuthenticated, AppointmentController.getPatientAppointments);
 appointmentRoute.get('/practice', isAuthenticated, AppointmentController.getPracticeAppointments);
 appointmentRoute.put(
-    '/confirm/:appointmentId',
+    '/practice/confirm/:appointmentId',
     isAuthenticated,
     AppointmentController.confirmAppointment,
 );
 appointmentRoute.put(
-    '/cancel/:appointmentId',
+    '/practice/cancel/:appointmentId',
     isAuthenticated,
     AppointmentController.cancelAppointment,
 );
 appointmentRoute.put(
-    '/reschedule/:appointmentId',
+    '/practice/reschedule/:appointmentId',
     isAuthenticated,
     AppointmentController.rescheduleAppointment,
+);
+appointmentRoute.put(
+    '/patient/confirm/:appointmentId',
+    isAuthenticated,
+    AppointmentController.patientConfirmRescheduledAppointment,
+);
+appointmentRoute.put(
+    '/patient/cancel/:appointmentId',
+    isAuthenticated,
+    AppointmentController.patientConfirmRescheduledAppointment,
 );
 
 export default appointmentRoute;

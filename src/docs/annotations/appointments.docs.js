@@ -291,7 +291,7 @@
 
 /**
  * @openapi
- * /api/v1/appointment/confirm/{appointmentId}:
+ * /api/v1/appointment/practice/confirm/{appointmentId}:
  *   put:
  *     summary: Confirm an appointment
  *     description: Allows doctors to confirm a pending appointment.
@@ -360,7 +360,7 @@
 
 /**
  * @openapi
- * /api/v1/appointment/cancel/{appointmentId}:
+ * /api/v1/appointment/practice/cancel/{appointmentId}:
  *   put:
  *     summary: Cancel an appointment
  *     description: Allows doctors to cancel a pending or confirmed appointment.
@@ -387,7 +387,7 @@
  *               reason:
  *                 type: string
  *                 description: Reason for canceling the appointment
- *                 example: "Patient is unavailable at the scheduled time."
+ *                 example: "Doctor is unavailable at the scheduled time."
  *     responses:
  *       '200':
  *         description: Appointment canceled successfully
@@ -440,7 +440,7 @@
 
 /**
  * @openapi
- * /api/v1/appointment/reschedule/{appointmentId}:
+ * /api/v1/appointment/practice/reschedule/{appointmentId}:
  *   put:
  *     summary: Reschedule an appointment
  *     description: Allows doctors to reschedule a pending appointment to a new date and time.
@@ -527,6 +527,142 @@
  *                 details:
  *                   type: string
  *                   example: "This practice isn't available at this time."
+ *       '500':
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ */
+
+/**
+ * @openapi
+ * /api/v1/appointment/patient/confirm/{appointmentId}:
+ *   put:
+ *     summary: Confirm an appointment
+ *     description: Allows patients to confirm a recently rescheduled appointment.
+ *     tags:
+ *       - Appointments
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: appointmentId
+ *         in: path
+ *         required: true
+ *         description: ID of the appointment to be confirmed
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *           example: "123e4567-e89b-12d3-a456-426614174000"
+ *     responses:
+ *       '200':
+ *         description: Appointment confirmed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Appointment confirmed successfully"
+ *                 data:
+ *                   $ref: '#/components/schemas/Appointment'
+ *       '403':
+ *         description: Only patients can access this route
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Only patients can access this route"
+ *       '404':
+ *         description: Practice or appointment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     noAppointment: "Appointment not found"
+ *       '500':
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Internal Server Error"
+ */
+
+/**
+ * @openapi
+ * /api/v1/appointment/patient/cancel/{appointmentId}:
+ *   put:
+ *     summary: cancel an appointment
+ *     description: Allows patients to cancel a recently rescheduled appointment.
+ *     tags:
+ *       - Appointments
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: appointmentId
+ *         in: path
+ *         required: true
+ *         description: ID of the appointment to be cancelled
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *           example: "123e4567-e89b-12d3-a456-426614174000"
+ *     responses:
+ *       '200':
+ *         description: Appointment cancelled successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 message:
+ *                   type: string
+ *                   example: "Appointment cancelled successfully"
+ *                 data:
+ *                   $ref: '#/components/schemas/Appointment'
+ *       '403':
+ *         description: Only patients can access this route
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Only patients can access this route"
+ *       '404':
+ *         description: appointment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     noAppointment: "Appointment not found"
  *       '500':
  *         description: Internal server error
  *         content:

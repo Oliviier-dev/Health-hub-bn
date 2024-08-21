@@ -115,6 +115,18 @@ export class AppointmentService {
                 throw new Error('Appointment not found');
             }
 
+            if (appointment.status === 'canceled') {
+                throw new Error('Appointment is canceled and cannot be confirmed');
+            }
+
+            if (appointment.status === 'confirmed') {
+                throw new Error('Appointment is already confirmed');
+            }
+
+            if (appointment.status !== 'pending') {
+                throw new Error('Only pending appointments can be confirmed');
+            }
+
             appointment.status = 'confirmed';
             await appointment.save();
 
@@ -146,6 +158,10 @@ export class AppointmentService {
 
             if (!appointment) {
                 throw new Error('Appointment not found');
+            }
+
+            if (appointment.status === 'canceled') {
+                throw new Error('Appointment Already cancelled');
             }
 
             appointment.status = 'canceled';
@@ -180,6 +196,14 @@ export class AppointmentService {
                 throw new Error('Appointment not found');
             }
 
+            if (appointment.status === 'canceled') {
+                throw new Error('Appointment is canceled');
+            }
+
+            if (appointment.status === 'rescheduled') {
+                throw new Error('Appointment is already rescheduled');
+            }
+
             const appointmentDate = new Date(newDateTime);
 
             const startRange = new Date(appointmentDate.getTime() - 30 * 60 * 1000);
@@ -205,6 +229,76 @@ export class AppointmentService {
             appointment.rescheduledDateTime = new Date();
             appointment.rescheduleReason = reason;
             appointment.status = 'rescheduled';
+            await appointment.save();
+
+            return appointment;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async patientConfirmRescheduledAppointment(user_id, appointment_id) {
+        try {
+            const appointment = await db.Appointment.findOne({
+                where: {
+                    id: appointment_id,
+                    patient_id: user_id,
+                },
+            });
+
+            if (!appointment) {
+                throw new Error('Appointment not found');
+            }
+
+            if (appointment.status === 'canceled') {
+                throw new Error('Appointment is canceled and cannot be confirmed');
+            }
+
+            if (appointment.status === 'confirmed') {
+                throw new Error('Appointment is already confirmed');
+            }
+
+            if (appointment.status !== 'rescheduled') {
+                throw new Error('Only rescheduled appointments can be confirmed by the patient');
+            }
+
+            appointment.status = 'confirmed';
+            await appointment.save();
+
+            return appointment;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async patientCancelRescheduledAppointment(user_id, appointment_id) {
+        try {
+            const appointment = await db.Appointment.findOne({
+                where: {
+                    id: appointment_id,
+                    patient_id: user_id,
+                },
+            });
+
+            if (!appointment) {
+                throw new Error('Appointment not found');
+            }
+
+            if (appointment.status === 'canceled') {
+                throw new Error('Appointment is already canceled');
+            }
+
+            if (appointment.status === 'confirmed') {
+                throw new Error(
+                    'Appointment is already confirmed and cannot be canceled by the patient',
+                );
+            }
+
+            if (appointment.status !== 'rescheduled') {
+                throw new Error('Only rescheduled appointments can be canceled by the patient');
+            }
+
+            appointment.status = 'canceled';
             await appointment.save();
 
             return appointment;
