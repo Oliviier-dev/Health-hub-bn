@@ -55,7 +55,7 @@ export class PracticeService {
                 throw new Error('Practice not found');
             }
 
-            const updatePractice = practiceExists.update(updatedFields);
+            const updatePractice = await practiceExists.update(updatedFields);
             return updatePractice;
         } catch (error) {
             throw error;

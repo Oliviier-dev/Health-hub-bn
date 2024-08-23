@@ -39,7 +39,7 @@ export default (sequelize) => {
             payment_status: {
                 type: DataTypes.ENUM,
                 values: ['Pending', 'Completed', 'Failed', 'Refunded', 'Canceled'],
-                defaultValue: PaymentStatus.Pending,
+                defaultValue: 'Pending',
             },
         },
         {
