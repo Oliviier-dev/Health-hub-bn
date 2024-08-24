@@ -86,6 +86,7 @@ export default (sequelize) => {
             foreignKey: 'patient_id',
             as: 'patient',
         });
+        User.hasMany(models.Payment, { foreignKey: 'patient_id' });
     };
 
     return User;

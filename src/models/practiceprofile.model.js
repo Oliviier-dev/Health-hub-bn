@@ -73,6 +73,7 @@ export default (sequelize) => {
             foreignKey: 'practice_id',
             as: 'practice',
         });
+        PracticeProfile.hasMany(models.Payment, { foreignKey: 'practice_id' });
     };
 
     return PracticeProfile;

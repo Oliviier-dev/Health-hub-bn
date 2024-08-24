@@ -79,5 +79,9 @@ export default (sequelize) => {
         },
     );
 
+    Appointment.associate = (models) => {
+        Appointment.hasOne(models.Payment, { foreignKey: 'appointment_id' });
+    };
+
     return Appointment;
 };
