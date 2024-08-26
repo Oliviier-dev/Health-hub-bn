@@ -71,6 +71,14 @@ export default (sequelize) => {
                 type: DataTypes.STRING,
                 allowNull: true,
             },
+            meeting_link: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
+            meeting_password: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
         },
         {
             tableName: 'appointments',

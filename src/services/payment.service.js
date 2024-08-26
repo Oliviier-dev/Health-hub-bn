@@ -1,6 +1,7 @@
 import { where } from 'sequelize';
 import db from '../models/index.js';
 import Stripe from 'stripe';
+import { createZoomMeeting } from '../utils/meetingLink.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -30,6 +31,17 @@ export class PaymentService {
             if (appointment.status !== 'confirmed') {
                 console.log(appointment.status);
                 throw new Error('unconfirmed appointment');
+            }
+
+            const existingPayment = await db.Payment.findOne({
+                where: {
+                    appointment_id: appointmentId,
+                    payment_status: 'Completed',
+                },
+            });
+
+            if (existingPayment) {
+                throw new Error('Payment already completed for this appointment');
             }
 
             const session = await stripe.checkout.sessions.create({
@@ -102,8 +114,37 @@ export class PaymentService {
                 throw new Error('You can only pay for pending payments');
             }
 
+            const appointment = await db.Appointment.findOne({
+                where: {
+                    id: appointment_id,
+                    patient_id,
+                },
+            });
+
+            if (!appointment) {
+                throw new Error('Appointment not found');
+            }
+
+            const topic = `${appointment.reasonForVisit} Meeting`;
+            const start_time = appointment.appointmentDateTime;
+
+            // Create meeting and wait for the result
+            const result = await createZoomMeeting(topic, start_time);
+
+            if (!result) {
+                throw new Error('Failed to create Zoom meeting');
+            }
+
+            // Update payment status
             await payment.update({ payment_status: 'Completed' });
-            return payment;
+
+            // Update appointment with meeting details
+            await appointment.update({
+                meeting_link: result.meeting_url,
+                meeting_password: result.password,
+            });
+
+            return { payment, appointment, result };
         } catch (error) {
             throw error;
         }
