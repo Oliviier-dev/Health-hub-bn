@@ -44,6 +44,12 @@ export class PaymentContoller {
                     .send({ error: 'You can only pay for confirmed appointments' });
             }
 
+            if (error.message === 'Payment already completed for this appointment') {
+                return res
+                    .status(400)
+                    .send({ error: 'Payment already completed for this appointment' });
+            }
+
             if (error.message === 'payment completed') {
                 return res
                     .status(400)
@@ -82,6 +88,14 @@ export class PaymentContoller {
 
             if (error.message === 'You can only pay for pending payments') {
                 return res.status(404).send({ error: 'You can only pay for pending payments' });
+            }
+
+            if (error.message === 'Appointment not found') {
+                return res.status(404).send({ error: 'Appointment not found' });
+            }
+
+            if (error.message === 'Failed to create Zoom meeting') {
+                return res.status(400).send({ error: 'Failed to create Zoom meeting' });
             }
 
             console.log('Error completing the payment', error);

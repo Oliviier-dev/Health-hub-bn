@@ -4,6 +4,7 @@ import authRoute from './auth.route.js';
 import practiceRoute from './practice.route.js';
 import appointmentRoute from './appointments.route.js';
 import paymentRoute from './payment.route.js';
+import chatRoute from './chat.route.js';
 
 const router = express.Router();
 
@@ -13,6 +14,7 @@ const routes = [
     { path: 'practice', route: practiceRoute },
     { path: 'appointment', route: appointmentRoute },
     { path: 'payment', route: paymentRoute },
+    { path: 'chat', route: chatRoute },
 ];
 
 routes.forEach(({ path, route }) => {
